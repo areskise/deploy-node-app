@@ -1,5 +1,5 @@
 const path = require('path');
-
+const { S3Client } = require('@aws-sdk/client-s3')
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -8,6 +8,7 @@ const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const flash = require('connect-flash');
 const multer = require('multer');
+const multerS3 = require('multer-s3')
 const helmet = require('helmet');
 const compression = require('compression');
 const morgan = require('morgan');
@@ -25,13 +26,16 @@ const store = new MongoDBStore({
 });
 const csrfProtection = csrf();
 
-const fileStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'images');
+const s3 = new S3Client()
+
+const fileStorage = multerS3({
+  s3: s3,
+  bucket: 'some-bucket',
+  metadata: function (req, file, cb) {
+    cb(null, {fieldName: file.fieldname});
   },
-  filename: (req, file, cb) => {
-    const unique = Date.now() + Math.random()
-    cb(null, (unique + '-' + file.originalname));
+  key: function (req, file, cb) {
+    cb(null, Date.now().toString())
   }
 });
 
