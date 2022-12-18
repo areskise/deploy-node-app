@@ -64,10 +64,11 @@ app.use(compression());
 app.use(morgan('combined'));
 app.use(express.json());
 app.use(
-  multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')
-);
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single('image'),
+  function(req, res, next) {
+    res.send('Successfully uploaded ' + req.files.length + ' files!')
+});
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use(
   session({
     secret: 'my secret',
