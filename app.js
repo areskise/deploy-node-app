@@ -48,7 +48,7 @@ const fileFilter = (req, file, cb) => {
 };
 
 app.set('view engine', 'ejs');
-app.set('views', 'views');
+app.set('views',  __dirname + '/views');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
@@ -110,7 +110,7 @@ app.use(errorController.get404);
 app.use((error, req, res, next) => {
   // res.status(error.httpStatusCode).render(...);
   // res.redirect('/500');
-  res.status(500).render('err500', {
+  res.status(500).render('500', {
     pageTitle: 'Error!',
     path: '/500',
     isAuthenticated: req.session.isLoggedIn
